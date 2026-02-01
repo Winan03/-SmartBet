@@ -1,0 +1,30 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "backend/main.py",
+            "use": "@vercel/python"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/app",
+            "dest": "/backend/main.py"
+        },
+        {
+            "src": "/styles.css",
+            "dest": "/backend/main.py"
+        },
+        {
+            "src": "/app.js",
+            "dest": "/backend/main.py"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/backend/main.py"
+        }
+    ],
+    "env": {
+        "RAPIDAPI_KEY": "@rapidapi-key"
+    }
+}

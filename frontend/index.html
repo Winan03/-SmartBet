@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SmartBet - Predicciones Inteligentes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app" id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-top">
+                <div class="logo">
+                    <div class="logo-icon"><span class="icon">sports_soccer</span></div>
+                    <span class="logo-text">Smart<span>Bet</span></span>
+                </div>
+                <div class="status-chip">
+                    <div class="status-indicator" id="statusIndicator"></div>
+                    <span id="statusText">Conectando...</span>
+                </div>
+            </div>
+            <nav class="date-nav">
+                <button class="nav-btn" id="prevBtn" onclick="changeDate(-1)">
+                    <span class="icon">chevron_left</span>
+                </button>
+                <div class="date-info">
+                    <div class="date-number" id="dateNumber">01</div>
+                    <div class="date-text" id="dateText">Domingo, 1 de Febrero</div>
+                    <div class="date-badge today" id="dateBadge">HOY</div>
+                </div>
+                <button class="nav-btn" id="nextBtn" onclick="changeDate(1)" disabled>
+                    <span class="icon">chevron_right</span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue"><span class="icon">analytics</span></div>
+                <div class="stat-value" id="totalPredictions">-</div>
+                <div class="stat-label">Predicciones</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><span class="icon">verified</span></div>
+                <div class="stat-value" id="winRate">71%</div>
+                <div class="stat-label">Win Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><span class="icon">trending_up</span></div>
+                <div class="stat-value" id="totalMarkets">11</div>
+                <div class="stat-label">Mercados</div>
+            </div>
+        </div>
+
+        <!-- Predictions Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="icon">emoji_events</span>
+                    Predicciones
+                </h2>
+                <span class="count-badge" id="predictionCount">0</span>
+            </div>
+            <div class="summary-card" id="summaryCard">
+                <div class="summary-header"><span class="icon icon-sm">insights</span>Resumen del día</div>
+                <div class="summary-stats">
+                    <div class="summary-item">
+                        <div class="summary-value success" id="winsCount">0</div>
+                        <div class="summary-label">Aciertos</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-value danger" id="lossesCount">0</div>
+                        <div class="summary-label">Fallos</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-value warning" id="dayWinRate">0%</div>
+                        <div class="summary-label">Win Rate</div>
+                    </div>
+                </div>
+            </div>
+            <div id="predictionsContainer" class="predictions-list">
+                <div class="loading-container">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Cargando predicciones...</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+        <div class="modal-container" onclick="event.stopPropagation()">
+            <div class="modal-card" id="modalCard">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <div class="modal-match-info">
+                        <span class="modal-league" id="modalLeague">Premier League</span>
+                        <h2 class="modal-teams" id="modalTeams">Team A vs Team B</h2>
+                        <span class="modal-time" id="modalTime">21:00</span>
+                    </div>
+                    <button class="modal-close" onclick="closeModal()">
+                        <span class="icon">close</span>
+                    </button>
+                </div>
+
+                <!-- Tabs -->
+                <div class="modal-tabs">
+                    <button class="tab-btn active" data-tab="analysis" onclick="switchTab('analysis')">
+                        <span class="icon">psychology</span>
+                        <span>Análisis</span>
+                    </button>
+                    <button class="tab-btn" data-tab="history" onclick="switchTab('history')">
+                        <span class="icon">history</span>
+                        <span>Historial</span>
+                    </button>
+                    <button class="tab-btn" data-tab="upcoming" onclick="switchTab('upcoming')">
+                        <span class="icon">event</span>
+                        <span>Próximos</span>
+                    </button>
+                </div>
+
+                <!-- Tab Content -->
+                <div class="modal-content">
+                    <!-- Analysis Tab -->
+                    <div class="tab-panel active" id="panel-analysis">
+                        <div class="prediction-box">
+                            <div class="pred-market" id="modalMarket">Over 2.5</div>
+                            <div class="pred-confidence">
+                                <div class="conf-ring" id="confRing">
+                                    <svg viewBox="0 0 100 100">
+                                        <defs>
+                                            <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" stop-color="#7c3aed" />
+                                                <stop offset="100%" stop-color="#06d6a0" />
+                                            </linearGradient>
+                                        </defs>
+                                        <circle cx="50" cy="50" r="45" class="ring-bg" />
+                                        <circle cx="50" cy="50" r="45" class="ring-fill" id="ringFill"
+                                            stroke="url(#ringGradient)" />
+                                    </svg>
+                                    <span class="conf-value" id="modalConfidence">74%</span>
+                                </div>
+                                <span class="conf-label">Confianza</span>
+                            </div>
+                        </div>
+                        <div class="probs-comparison">
+                            <div class="prob-box model">
+                                <span class="prob-title">Modelo</span>
+                                <span class="prob-val" id="modalModelProb">74%</span>
+                            </div>
+                            <div class="vs-badge">VS</div>
+                            <div class="prob-box house">
+                                <span class="prob-title">Casa</span>
+                                <span class="prob-val" id="modalHouseProb">50%</span>
+                            </div>
+                        </div>
+                        <div class="edge-bar">
+                            <span class="edge-label">Edge</span>
+                            <div class="edge-fill-container">
+                                <div class="edge-fill" id="edgeFill"></div>
+                            </div>
+                            <span class="edge-value" id="modalEdge">+24%</span>
+                        </div>
+                        <div class="reasoning-section">
+                            <h4><span class="icon">lightbulb</span>Razonamiento</h4>
+                            <p id="modalReasoning">Análisis del modelo...</p>
+                        </div>
+                        <div class="factors-section">
+                            <h4><span class="icon">bar_chart</span>Factores Clave</h4>
+                            <div class="factors-grid" id="modalFactors"></div>
+                        </div>
+                    </div>
+
+                    <!-- History Tab -->
+                    <div class="tab-panel" id="panel-history">
+                        <div class="team-selector">
+                            <button class="team-btn active" id="btnHome" onclick="selectTeam('home')">
+                                <span id="homeTeamName">Local</span>
+                            </button>
+                            <button class="team-btn" id="btnH2H" onclick="selectTeam('h2h')">
+                                <span class="icon">compare_arrows</span> H2H
+                            </button>
+                            <button class="team-btn" id="btnAway" onclick="selectTeam('away')">
+                                <span id="awayTeamName">Visitante</span>
+                            </button>
+                        </div>
+                        <div class="history-list" id="historyList"></div>
+                    </div>
+
+                    <!-- Upcoming Tab -->
+                    <div class="tab-panel" id="panel-upcoming">
+                        <div class="team-selector">
+                            <button class="team-btn active" id="btnUpHome" onclick="selectUpcoming('home')">
+                                <span id="upHomeTeamName">Local</span>
+                            </button>
+                            <button class="team-btn" id="btnUpAway" onclick="selectUpcoming('away')">
+                                <span id="upAwayTeamName">Visitante</span>
+                            </button>
+                        </div>
+                        <div class="upcoming-list" id="upcomingList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Match Stats Modal -->
+    <div class="stats-modal-overlay" id="statsModalOverlay" onclick="closeStatsModal()">
+        <div class="stats-modal" onclick="event.stopPropagation()">
+            <div class="stats-header">
+                <h3 id="statsMatchTitle">Match Stats</h3>
+                <button class="modal-close" onclick="closeStatsModal()">
+                    <span class="icon">close</span>
+                </button>
+            </div>
+            <div class="stats-score" id="statsScore">2 - 1</div>
+            <div class="stats-grid" id="statsGrid"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

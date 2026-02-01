@@ -1,0 +1,61 @@
+# Dependencies
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.venv/
+ENV/
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Models (too large for git)
+notebooks/models_v5/
+*.pkl
+*.joblib
+
+# Data files
+data/*.csv
+data/*.xlsx
+*.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+android/*.keystore
+android/local.properties
+
+# Coverage
+.coverage
+htmlcov/
